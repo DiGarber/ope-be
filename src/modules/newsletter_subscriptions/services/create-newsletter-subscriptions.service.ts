@@ -36,7 +36,7 @@ export class NewsletterSubscriptionsService {
 
   async findAll(): Promise<NewsletterSubscription[]> {
     return await this.newsletterSubscriptionRepository.find({
-      order: { createdAt: 'DESC' },
+      order: { created_at: 'DESC' },
     });
   }
 

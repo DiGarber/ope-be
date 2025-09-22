@@ -1,18 +1,10 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { BaseEntity } from '@src/modules/common/base-entity.entity';
+import { Entity, Column } from 'typeorm';
 
 @Entity('newsletter_subscriptions')
-export class NewsletterSubscription {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class NewsletterSubscription extends BaseEntity {
   @Column({ type: 'varchar', length: 100, nullable: false })
-  fullName: string;
+  name: string;
 
   @Column({ type: 'varchar', length: 100, nullable: false, unique: true })
   email: string;
@@ -22,10 +14,4 @@ export class NewsletterSubscription {
 
   @Column({ type: 'varchar', length: 1000, nullable: false })
   message: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }
