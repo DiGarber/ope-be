@@ -13,28 +13,34 @@ import { NewsletterSubscriptionsModule } from './modules/newsletter_subscription
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
+        const dbUrl = configService.get('DB_URL');
         console.log(
-          configService.get('ORM_SSL'),
-          configService.get('DB_HOST'),
-          configService.get('DB_PORT'),
-          configService.get('DB_USERNAME'),
-          configService.get('DB_PASSWORD'),
-          configService.get('DB_NAME'),
+          'DB_URL:',
+          dbUrl ? dbUrl.replace(/:[^:@]*@/, ':***@') : 'undefined',
         );
+
+        // Validate that DB_URL is provided and is a string
+        if (!dbUrl || typeof dbUrl !== 'string') {
+          throw new Error(
+            'DB_URL environment variable must be provided as a string',
+          );
+        }
+
         return {
           type: 'postgres',
-          host: configService.get('DB_HOST'),
-          port: configService.get('DB_PORT'),
-          username: configService.get('DB_USERNAME'),
-          password: configService.get('DB_PASSWORD', 'postgres'),
-          database: configService.get('DB_NAME'),
+          url: dbUrl,
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
           synchronize: JSON.parse(
             configService.get('ORM_SYNCHRONIZE') ?? 'false',
           ),
-          // ssl: JSON.parse(configService.get('ORM_SSL') ?? 'false'),
           ssl: {
             rejectUnauthorized: false,
+          },
+          // Additional options to handle authentication issues
+          extra: {
+            max: 20,
+            idleTimeoutMillis: 30000,
+            connectionTimeoutMillis: 2000,
           },
         };
       },
