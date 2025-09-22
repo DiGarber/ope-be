@@ -13,6 +13,14 @@ import { NewsletterSubscriptionsModule } from './modules/newsletter_subscription
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
+        console.log(
+          configService.get('ORM_SSL'),
+          configService.get('DB_HOST'),
+          configService.get('DB_PORT'),
+          configService.get('DB_USERNAME'),
+          configService.get('DB_PASSWORD'),
+          configService.get('DB_NAME'),
+        );
         return {
           type: 'postgres',
           host: configService.get('DB_HOST'),
@@ -24,7 +32,10 @@ import { NewsletterSubscriptionsModule } from './modules/newsletter_subscription
           synchronize: JSON.parse(
             configService.get('ORM_SYNCHRONIZE') ?? 'false',
           ),
-          ssl: JSON.parse(configService.get('ORM_SSL') ?? 'false'),
+          // ssl: JSON.parse(configService.get('ORM_SSL') ?? 'false'),
+          ssl: {
+            rejectUnauthorized: false,
+          },
         };
       },
       inject: [ConfigService],
